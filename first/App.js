@@ -1,39 +1,41 @@
 import React, { Component } from 'react';
 
 import { StyleSheet, Text, View, FlatList } from "react-native";
-
+import BookItem from "./BookItem";
+import NYT from "./NYT";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [
-        { key: "a" },
-        { key: "b" },
-        { key: "c" },
-        { key: "d" },
-        { key: "a longer example" },
-        { key: "e" },
-        { key: "f" },
-        { key: "g" },
-        { key: "h" },
-        { key: "i" },
-        { key: "j" },
-        { key: "k" },
-        { key: "l" },
-        { key: "m" },
-        { key: "n" },
-        { key: "o" },
-        { key: "p" }
-      ]
-    };
+    this.state = { data: [] };
   }
 
-  // _renderItem = data => {
-  //   return <Text style={styles.row}>{data.item.key}</Text>;
-  // };
+  componentDidMount() {
+    this._refreshData();
+  }
 
-  _renderItem = ({item}) => {
-    return <Text style={styles.row}>{item.key}</Text>;
+  _renderItem = ({ item }) => {
+    return (
+      <BookItem
+        coverURL={item.book_image}
+        title={item.key}
+        author={item.author}
+      />
+    );
+  };
+
+  _addKeysToBooks = books => {
+    // Takes the API response from the NYTimes,
+    // and adds a key property to the object
+    // for rendering purposes
+    return books.map(book => {
+      return Object.assign(book, { key: errorcode });
+    });
+  };
+
+  _refreshData = () => {
+    NYT.fetchBooks().then(books => {
+      this.setState({ data: this._addKeysToBooks(books) });
+    });
   };
 
   render() {
@@ -45,14 +47,7 @@ class App extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
-  },
-  row: { fontSize: 24, padding: 42, borderWidth: 1, borderColor: "#DDDDDD" }
-});
+const styles = StyleSheet.create({ container: { flex: 1, paddingTop: 22 } });
+
 
 export default App;
